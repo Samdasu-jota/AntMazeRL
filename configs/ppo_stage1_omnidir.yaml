@@ -1,0 +1,30 @@
+# Stage 1 — 전방향(omnidirectional) 워커: 검증된 6m 워커를 '랜덤 방향 목표'로 fine-tune.
+#   목적: +y만 학습한 '방향맹' 워커가 어느 방향이든 조향(command-following)하게 만든다.
+#   RandomGoalDirection 래퍼가 매 reset마다 목표를 reachable box 안 임의 방향·거리로 둠.
+env_id: "AntMazeOpen-v0"          # 빈 평지(기둥 없음) — 순수 전방향 보행 학습
+env_kwargs: {goal_y: 6.0}         # goal_pos는 RandomGoalDirection이 per-reset 덮어씀
+env_wrapper: "random_goal"
+env_wrapper_kwargs: {dist_min: 2.0, dist_max: 6.5}
+init_from: "models/checkpoints_stage0_scratch_6m/ppo_final.zip"
+total_timesteps: 2000000          # 전방향은 단방향보다 어려움 → 2M
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5                # init_from시 체크포인트에서 복원되어 무시됨(무해)
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"   # 존재X → BC 건너뜀
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_stage1_omnidir"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "stage1_omnidir_v1"

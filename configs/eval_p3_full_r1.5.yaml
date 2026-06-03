@@ -1,0 +1,30 @@
+# Phase A 풀맵 zero-shot eval, 보조 반경 r=1.5 (58~65% history와 연속성). 헤드라인 아님.
+#   eval_p3_full_honest.yaml과 동일 + goal_radius 1.0→1.5만 다름.
+env_id: "AntMazeWaypoint-v0"
+env_kwargs: {energy_coef: 0.02, time_penalty: 0.0, stall_penalty: 0.0, pillar_half_len: 3.0, start_xy: [0.0, 0.0], up_thresh: 0.0, up_bonus_coef: 0.1}
+env_wrapper: "waypoint_follow"
+env_wrapper_kwargs: {goal_radius: 1.5, final_bonus: 100.0, subgoal_bonus: 10.0, waypoints: [[1.0, 0.0], [1.0, 6.0], [0.0, 6.0]]}
+init_from: "models/checkpoints_p2_upbonus_plane_v2/ppo_final.zip"
+override_log_std: -1.5
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_p3_maze_upright"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: false
+run_name: "eval_p3_full_r15"

@@ -1,0 +1,28 @@
+# Stage 0 — 빈 평지(가운데 기둥 제거)에서 '목표까지 걷기' 검증 — SCRATCH 트랙
+#   BC 없이 PPO가 0부터 보행을 학습하나? (warm 트랙과 비교용 baseline)
+#   커리큘럼: goal_y 3 → 4 → 6. 통과 기준 = 결정적 100ep 성공률 ≥80% AND 평균 ep_len ≪ 1000.
+env_id: "AntMazeOpen-v0"
+env_kwargs: {goal_y: 3.0}        # 다음 단계는 4.0 / 6.0 으로 바꾸고 init_from 지정
+init_from: null
+total_timesteps: 1000000         # scratch는 곡선이 오르면 2~3M까지 연장 가능
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5               # 미로(-1.0)보다 넓게 시작: Stage 0는 '탐색' 검증이 핵심
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage0.pt"   # 존재하지 않는 경로 → BC 건너뜀(warm=False 기록)
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_stage0_scratch"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "stage0_openplane_scratch_3m_v1"

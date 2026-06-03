@@ -1,0 +1,351 @@
+{
+  "meta": {
+    "n_episodes": 100,
+    "seed0": 20000,
+    "deterministic": true,
+    "date": "2026-06-03",
+    "note": "PPO=FixedNormalizeObs, BC=raw obs(내부정규화), random=action_space.sample. 같은 env서 한 변수만 바꾼 Δ만 통제 비교."
+  },
+  "entries": {
+    "random_short": {
+      "label": "random",
+      "kind": "random",
+      "group": "maze_short",
+      "env_label": "축소미로 honest r1.0",
+      "checkpoint": null,
+      "config": "configs/ppo_p3_maze_upright.yaml",
+      "env_id": "AntMazeWaypoint-v0",
+      "env_kwargs": {
+        "energy_coef": 0.02,
+        "time_penalty": 0.0,
+        "stall_penalty": 0.0,
+        "pillar_half_len": 1.0,
+        "start_xy": [
+          0.0,
+          0.0
+        ],
+        "up_thresh": 0.0,
+        "up_bonus_coef": 0.1
+      },
+      "posture_term": true,
+      "regime": "flip-fix ON (자세종료)",
+      "success_rate": 0.0,
+      "mean_ep_len": 119.6,
+      "flip_rate": 100.0,
+      "mean_min_up_z": -0.082,
+      "frac_inverted": 1.4,
+      "mean_reward": 5.4,
+      "n_episodes": 100
+    },
+    "bc_short": {
+      "label": "BC (모방학습)",
+      "kind": "bc",
+      "group": "maze_short",
+      "env_label": "축소미로 honest r1.0",
+      "checkpoint": "models/bc_policy.pt",
+      "config": "configs/ppo_p3_maze_upright.yaml",
+      "env_id": "AntMazeWaypoint-v0",
+      "env_kwargs": {
+        "energy_coef": 0.02,
+        "time_penalty": 0.0,
+        "stall_penalty": 0.0,
+        "pillar_half_len": 1.0,
+        "start_xy": [
+          0.0,
+          0.0
+        ],
+        "up_thresh": 0.0,
+        "up_bonus_coef": 0.1
+      },
+      "posture_term": true,
+      "regime": "flip-fix ON (자세종료)",
+      "success_rate": 0.0,
+      "mean_ep_len": 980.5,
+      "flip_rate": 2.0,
+      "mean_min_up_z": 0.959,
+      "frac_inverted": 0.1,
+      "mean_reward": 30.5,
+      "n_episodes": 100
+    },
+    "rl_preflip_short": {
+      "label": "RL 전복前",
+      "kind": "ppo",
+      "group": "maze_short",
+      "env_label": "축소미로 honest r1.0",
+      "checkpoint": "models/checkpoints_stage1_maze_short/ppo_final.zip",
+      "config": "configs/ppo_stage1_maze_short.yaml",
+      "env_id": "AntMazeWaypoint-v0",
+      "env_kwargs": {
+        "energy_coef": 0.02,
+        "time_penalty": 0.0,
+        "stall_penalty": 0.0,
+        "pillar_half_len": 1.0,
+        "start_xy": [
+          0.0,
+          0.0
+        ],
+        "up_thresh": -1.1
+      },
+      "posture_term": false,
+      "regime": "pre-flip (자세종료 OFF)",
+      "success_rate": 58.0,
+      "mean_ep_len": 710.2,
+      "flip_rate": 99.0,
+      "mean_min_up_z": -0.966,
+      "frac_inverted": 59.7,
+      "mean_reward": -35.0,
+      "n_episodes": 100
+    },
+    "rl_postflip_short": {
+      "label": "RL 전복後(직립)",
+      "kind": "ppo",
+      "group": "maze_short",
+      "env_label": "축소미로 honest r1.0",
+      "checkpoint": "models/checkpoints_p3_maze_upright/ppo_final.zip",
+      "config": "configs/ppo_p3_maze_upright.yaml",
+      "env_id": "AntMazeWaypoint-v0",
+      "env_kwargs": {
+        "energy_coef": 0.02,
+        "time_penalty": 0.0,
+        "stall_penalty": 0.0,
+        "pillar_half_len": 1.0,
+        "start_xy": [
+          0.0,
+          0.0
+        ],
+        "up_thresh": 0.0,
+        "up_bonus_coef": 0.1
+      },
+      "posture_term": true,
+      "regime": "flip-fix ON (자세종료)",
+      "success_rate": 88.0,
+      "mean_ep_len": 118.4,
+      "flip_rate": 11.0,
+      "mean_min_up_z": 0.798,
+      "frac_inverted": 0.1,
+      "mean_reward": 160.8,
+      "n_episodes": 100
+    },
+    "rl_upright_full_zeroshot": {
+      "label": "직립워커 → 풀맵 (zero-shot)",
+      "kind": "ppo",
+      "group": "maze_full",
+      "env_label": "풀맵 honest r1.0",
+      "checkpoint": "models/checkpoints_p3_maze_upright/ppo_final.zip",
+      "config": "configs/eval_p3_full_honest.yaml",
+      "env_id": "AntMazeWaypoint-v0",
+      "env_kwargs": {
+        "energy_coef": 0.02,
+        "time_penalty": 0.0,
+        "stall_penalty": 0.0,
+        "pillar_half_len": 3.0,
+        "start_xy": [
+          0.0,
+          0.0
+        ],
+        "up_thresh": 0.0,
+        "up_bonus_coef": 0.1
+      },
+      "posture_term": true,
+      "regime": "flip-fix ON (자세종료)",
+      "success_rate": 39.0,
+      "mean_ep_len": 295.8,
+      "flip_rate": 59.0,
+      "mean_min_up_z": 0.281,
+      "frac_inverted": 2.6,
+      "mean_reward": 53.4,
+      "n_episodes": 100
+    },
+    "rl_full_finetune": {
+      "label": "풀맵 직접학습 (fine-tune)",
+      "kind": "ppo",
+      "group": "maze_full",
+      "env_label": "풀맵 honest r1.0",
+      "checkpoint": "models/checkpoints_p3_maze_fullpillar/ppo_final.zip",
+      "config": "configs/ppo_p3_maze_fullpillar.yaml",
+      "env_id": "AntMazeWaypoint-v0",
+      "env_kwargs": {
+        "energy_coef": 0.02,
+        "time_penalty": 0.0,
+        "stall_penalty": 0.0,
+        "pillar_half_len": 3.0,
+        "start_xy": [
+          0.0,
+          0.0
+        ],
+        "up_thresh": 0.0,
+        "up_bonus_coef": 0.1
+      },
+      "posture_term": true,
+      "regime": "flip-fix ON (자세종료)",
+      "success_rate": 73.0,
+      "mean_ep_len": 324.4,
+      "flip_rate": 26.0,
+      "mean_min_up_z": 0.615,
+      "frac_inverted": 2.0,
+      "mean_reward": 153.5,
+      "n_episodes": 100
+    },
+    "scratch_plane3": {
+      "label": "scratch (BC 없이)",
+      "kind": "ppo",
+      "group": "plane3",
+      "env_label": "평지 3m (open)",
+      "checkpoint": "models/checkpoints_stage0_scratch/ppo_final.zip",
+      "config": "configs/ppo_stage0_scratch.yaml",
+      "env_id": "AntMazeOpen-v0",
+      "env_kwargs": {
+        "goal_y": 3.0,
+        "up_thresh": -1.1
+      },
+      "posture_term": false,
+      "regime": "pre-flip (자세종료 OFF)",
+      "success_rate": 81.0,
+      "mean_ep_len": 384.4,
+      "flip_rate": 16.0,
+      "mean_min_up_z": 0.566,
+      "frac_inverted": 7.9,
+      "mean_reward": -51.3,
+      "n_episodes": 100
+    },
+    "warm_plane3": {
+      "label": "BC warm-start",
+      "kind": "ppo",
+      "group": "plane3",
+      "env_label": "평지 3m (open)",
+      "checkpoint": "models/checkpoints_stage0_warm/ppo_final.zip",
+      "config": "configs/ppo_stage0_warm.yaml",
+      "env_id": "AntMazeOpen-v0",
+      "env_kwargs": {
+        "goal_y": 3.0,
+        "up_thresh": -1.1
+      },
+      "posture_term": false,
+      "regime": "pre-flip (자세종료 OFF)",
+      "success_rate": 66.0,
+      "mean_ep_len": 456.7,
+      "flip_rate": 1.0,
+      "mean_min_up_z": 0.951,
+      "frac_inverted": 0.2,
+      "mean_reward": -251.3,
+      "n_episodes": 100
+    },
+    "scratch_plane6": {
+      "label": "scratch 6m (직립 seed)",
+      "kind": "ppo",
+      "group": "plane6",
+      "env_label": "평지 6m (open)",
+      "checkpoint": "models/checkpoints_stage0_scratch_6m/ppo_final.zip",
+      "config": "configs/ppo_stage0_scratch_6m.yaml",
+      "env_id": "AntMazeOpen-v0",
+      "env_kwargs": {
+        "goal_y": 6.0,
+        "up_thresh": -1.1
+      },
+      "posture_term": false,
+      "regime": "pre-flip (자세종료 OFF)",
+      "success_rate": 87.0,
+      "mean_ep_len": 556.9,
+      "flip_rate": 34.0,
+      "mean_min_up_z": 0.231,
+      "frac_inverted": 11.6,
+      "mean_reward": -108.8,
+      "n_episodes": 100
+    }
+  },
+  "factor_deltas": [
+    {
+      "key": "F1_learning",
+      "label": "학습 자체 (random→RL)",
+      "env": "축소미로",
+      "before": [
+        "random",
+        0.0
+      ],
+      "after": [
+        "RL 전복後",
+        88.0
+      ],
+      "delta": 88.0,
+      "source": "measured"
+    },
+    {
+      "key": "F2_bc_vs_scratch",
+      "label": "모방학습(BC) vs scratch",
+      "env": "평지 3m",
+      "before": [
+        "BC warm-start",
+        66.0
+      ],
+      "after": [
+        "scratch",
+        81.0
+      ],
+      "delta": 15.0,
+      "source": "measured",
+      "note": "양수=scratch가 더 나음 (BC가 오히려 해)"
+    },
+    {
+      "key": "F3_geometry",
+      "label": "기하: 풀맵→축소기둥+A* (전복수정 前)",
+      "env": "미로 honest r1.0",
+      "before": [
+        "풀맵 honest",
+        21.0
+      ],
+      "after": [
+        "축소+A*",
+        58.0
+      ],
+      "delta": 37.0,
+      "source": "log(풀 honest 21%)+measured(축소 58%)"
+    },
+    {
+      "key": "F4_flipfix",
+      "label": "★ 전복수정 (flip-fix)",
+      "env": "축소미로 (동일!)",
+      "before": [
+        "RL 전복前 58%·flip99%",
+        58.0
+      ],
+      "after": [
+        "RL 전복後 88%·flip11%",
+        88.0
+      ],
+      "delta": 30.0,
+      "source": "measured",
+      "note": "env 완전 동일 — 자세종료+직립보너스만 추가"
+    },
+    {
+      "key": "F5_map_difficulty",
+      "label": "맵 난이도: 축소→풀맵 (zero-shot)",
+      "env": "직립워커 동일정책",
+      "before": [
+        "축소",
+        88.0
+      ],
+      "after": [
+        "풀맵 zero-shot",
+        39.0
+      ],
+      "delta": -49.0,
+      "source": "measured",
+      "note": "음수=맵이 어려워짐(퇴행 아님)"
+    },
+    {
+      "key": "F6_full_finetune",
+      "label": "풀맵 직접학습 (일반화)",
+      "env": "풀맵 honest r1.0",
+      "before": [
+        "zero-shot",
+        39.0
+      ],
+      "after": [
+        "fine-tune",
+        73.0
+      ],
+      "delta": 34.0,
+      "source": "measured"
+    }
+  ]
+}

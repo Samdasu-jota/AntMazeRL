@@ -1,0 +1,11 @@
+# Behavior Cloning 하이퍼파라미터
+learning_rate: 0.001    # 학습 속도 (너무 크면 불안정, 작으면 느림)
+batch_size: 256         # 한 번에 처리할 데이터 묶음 크기
+epochs: 50              # 전체 데이터를 몇 번 반복 학습할지
+hidden_dim: 256         # 은닉층 뉴런 수
+val_split: 0.1          # 검증용 비율 (10%)
+seed: 42                # 재현성
+data_path: "data/expert_demos.npz"
+model_out: "models/bc_policy.pt"
+norm_out: "data/obs_norm_stats.npz"     # 정규화 통계(mean/std) 별도 저장 (3단계 PPO 대비)
+curve_out: "outputs/bc_training_curve.png"

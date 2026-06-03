@@ -1,0 +1,11 @@
+# === AntMazeRL 의존성 === (Python 3.10+)
+mujoco>=3.1               # 물리 시뮬레이터
+gymnasium[mujoco]>=1.0    # RL 환경 표준 인터페이스 (Ant-v5 포함)
+stable-baselines3>=2.3    # PPO 등 검증된 RL 구현체
+torch>=2.2                # 정책망 / world model
+numpy<2.0                 # SB3/일부 패키지 numpy 2.x 비호환 대비
+matplotlib
+wandb                     # 학습 로깅/시각화
+onnx                      # 모델 포맷 (6단계)
+onnxruntime               # 추론/양자화 실행 런타임 (6단계)
+imageio[ffmpeg]           # 영상(mp4) 저장 — ffmpeg wheel 포함, 자체완결

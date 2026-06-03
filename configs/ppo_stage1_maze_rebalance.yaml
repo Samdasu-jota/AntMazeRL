@@ -1,0 +1,36 @@
+# Stage 1 (rev2) — 미로 직접 fine-tune (리밸런스 보상 + 기하 결함 수정).
+#   검증 결과: 미로 막힘은 '물리적 턴 한계'가 아니라 배치/기하 문제가 큼.
+#     · 기둥 제거 → 성공 2배(16.7→38.3%)   · goal 반경 완화 → 3배(16.7→50%)
+#     · 결함1: 개미가 (0,0)=기둥 밑동에 스폰돼 끼임(첫 다리 막힘 53% vs 평지 27%)
+#     · 결함2: goal(0,6)이 벽 끝 + 1m 반경 빡빡
+#   처방: (가) start_xy=(0,-1)로 스폰을 기둥 밑동에서 뗌  (나) goal_radius=1.5
+#         (다) 리밸런스 보상(energy 0.02, time/stall 0)으로 붕괴 방지(예전 미로 fine-tune
+#              8%는 붕괴 보상 탓)  (라) turn30(턴 학습된) 워커서 출발.
+#   목표: 실제 90° 턴을 직격 학습 → 70% 게이트 재도전.
+env_id: "AntMazeWaypoint-v0"
+env_kwargs: {energy_coef: 0.02, time_penalty: 0.0, stall_penalty: 0.0, start_xy: [0.0, -1.0]}
+env_wrapper: "waypoint_follow"
+env_wrapper_kwargs: {goal_radius: 1.5, final_bonus: 100.0, subgoal_bonus: 10.0}
+init_from: "models/checkpoints_stage1_cmdfollow_turn30/ppo_final.zip"
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5   # init_from이 있으면 무시(turn30의 log_std 로드)
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_stage1_maze_rebalance"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "stage1_maze_rebalance_v1"

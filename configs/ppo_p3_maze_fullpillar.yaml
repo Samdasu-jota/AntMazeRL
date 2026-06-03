@@ -1,0 +1,34 @@
+# Phase A — 풀맵(pillar_half_len=3.0) 직립 워커 fine-tune. ppo_p3_maze_upright.yaml(88%, 축소기둥) 복제.
+#   가설 시험: 88%는 축소기둥(1.0) 산물(임시방편)인가? 직립 레시피를 진짜 풀맵에 직접 학습하면 천장이 얼마?
+#   88% 런과 byte-for-byte 동일 + 변경 3개: pillar_half_len(1.0→3.0), waypoints(축소→풀 A*),
+#     checkpoint_dir/run_name(88% 산출물 보존). init_from은 p2 *평지* 워커(미로 워커 아님!).
+#   override_log_std=-1.5(σ0.22) 유지 — 누락 시 자세종료가 학습 굶김(v1 교훈). 시작 로그 σ≈0.223 확인.
+#   풀 A* 웨이포인트 [[1,0],[1,6],[0,6]] = x=1.0 6m 직선(긴 기둥 옆) + (1,6) sharp ~90° 좌회전 → goal.
+env_id: "AntMazeWaypoint-v0"
+env_kwargs: {energy_coef: 0.02, time_penalty: 0.0, stall_penalty: 0.0, pillar_half_len: 3.0, start_xy: [0.0, 0.0], up_thresh: 0.0, up_bonus_coef: 0.1}
+env_wrapper: "waypoint_follow"
+env_wrapper_kwargs: {goal_radius: 1.0, final_bonus: 100.0, subgoal_bonus: 10.0, waypoints: [[1.0, 0.0], [1.0, 6.0], [0.0, 6.0]]}
+init_from: "models/checkpoints_p2_upbonus_plane_v2/ppo_final.zip"
+override_log_std: -1.5
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5   # init_from이 있으면 무시(override_log_std가 우선)
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_p3_maze_fullpillar"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: false
+run_name: "p3_maze_fullpillar_v1"

@@ -1,0 +1,35 @@
+# Stage 1 (rev2) / C0 — penalty REBALANCE only (보상 밸런스 단독, 각도 커리큘럼 없음).
+#   진단: cmdfollow 붕괴(0.70→0.05 goals/ep)는 'per-step 페널티 누적'이 원인.
+#   sequence는 도달해도 종료 안 함(resample) → energy/time/stall이 1000스텝까지
+#   누적, 희소한 +bonus를 압도 → 정책이 '빨리 넘어져 페널티 탈출'로 붕괴.
+#   (Stage 0는 도달=종료라 누적이 없어 87% 성공.)
+#   수정: per-step 페널티를 0~floor로 → '보상 = 도달 이벤트'(= time-windowed
+#        reward의 누적-제거 효과를 우리 환경에 맞게 구현; obs 변경 없음).
+#   max_goals 5→3으로 에피소드 단축. init_from = 검증된 omni 워커(0.70 goals/ep).
+env_id: "AntMazeOpen-v0"
+env_kwargs: {energy_coef: 0.02, time_penalty: 0.0, stall_penalty: 0.0, goal_bonus: 100.0}
+env_wrapper: "random_sequence"
+env_wrapper_kwargs: {max_goals: 3, dist_min: 2.0, dist_max: 4.0}
+init_from: "models/checkpoints_stage1_omnidir/ppo_final.zip"
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5   # ⚠️ init_from이 있으면 무시됨(omni의 log_std ~0.52가 로드됨). fresh일 때만 적용.
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"   # 존재X → BC warm-start 건너뜀(의도된 동작)
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_stage1_cmdfollow_rebalance"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "stage1_cmdfollow_rebalance_v1"

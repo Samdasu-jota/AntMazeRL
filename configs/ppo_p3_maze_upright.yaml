@@ -1,0 +1,37 @@
+# Phase 3 — 미로 재테스트: 직립 워커(Phase2 v2, 98%/flip2%)를 축소기둥 미로에 fine-tune.
+#   가설(사용자): Stage 1의 58~65% 정체는 '턴/기하 한계'가 아니라 '60% 스텝 전복'의 결과.
+#     → 전복을 막은 직립 워커로 같은 미로를 풀면 정체가 풀릴 것.
+#   ⚠️ init_from은 직립 평지 워커(p2_v2)다 — 미로 체크포인트(stage1_maze_short)가 아님.
+#      미로 워커는 *결정적*으로도 mean_min_up_z -0.97(배깔고 김)이라 seed로 쓰면 전복 mean을 물려받음.
+#   설정: 축소기둥(pillar_half_len 1.0) + A* 웨이포인트 + honest spawn(0,0) + goal_radius 1.0
+#     (stage1_maze_short과 동일 기하) + 자세종료(up_thresh 0.0) + 직립보너스(0.1).
+#   override_log_std=-1.5(σ0.22): 평지 v2와 동일 저노이즈 → 전복 굶김 방지(v1 교훈). 턴 학습이
+#     안 되면(전복 아닌데 성공 정체) σ를 올린다(-1.2/-1.0). suicide 방지: time/stall 0 유지.
+env_id: "AntMazeWaypoint-v0"
+env_kwargs: {energy_coef: 0.02, time_penalty: 0.0, stall_penalty: 0.0, pillar_half_len: 1.0, start_xy: [0.0, 0.0], up_thresh: 0.0, up_bonus_coef: 0.1}
+env_wrapper: "waypoint_follow"
+env_wrapper_kwargs: {goal_radius: 1.0, final_bonus: 100.0, subgoal_bonus: 10.0, waypoints: [[-1.0, 1.4], [-1.0, 4.6], [0.0, 6.0]]}
+init_from: "models/checkpoints_p2_upbonus_plane_v2/ppo_final.zip"
+override_log_std: -1.5
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5   # init_from이 있으면 무시(override_log_std가 우선)
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_p3_maze_upright"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: false
+run_name: "p3_maze_upright_v1"

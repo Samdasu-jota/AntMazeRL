@@ -1,0 +1,30 @@
+# Stage 1 (rev2) — command-follower 학습: 목표가 '에피소드 중간에 바뀌는' 빈 평지 훈련.
+#   RandomWaypointSequence 래퍼가 목표 도달 즉시 새 랜덤 방향 목표로 교체(최대 5개) →
+#   '달리는 중 방향 전환(mid-episode turning)'을 직접·자주 연습. legged_gym command-resampling.
+#   init_from = 전방향(omni) 워커(방향 인지 있음) → 시퀀스 학습이 +y 회복 + 꺾기 추가.
+env_id: "AntMazeOpen-v0"
+env_wrapper: "random_sequence"
+env_wrapper_kwargs: {max_goals: 5, dist_min: 2.0, dist_max: 4.0}
+init_from: "models/checkpoints_stage1_omnidir/ppo_final.zip"
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -0.5
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/NO_BC_stage1.pt"
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_stage1_cmdfollow"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "stage1_cmdfollow_v1"

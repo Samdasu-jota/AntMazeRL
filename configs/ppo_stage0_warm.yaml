@@ -1,0 +1,28 @@
+# Stage 0 — 빈 평지(가운데 기둥 제거)에서 '목표까지 걷기' 검증 — WARM 트랙
+#   BC 보행을 warm-start로 받고 RL이 '목표로 조향'만 학습. (BC→RL 파이프라인 = 통과 현실 경로)
+#   커리큘럼: goal_y 3 → 4 → 6. 통과 기준 = 결정적 100ep 성공률 ≥80% AND 평균 ep_len ≪ 1000.
+env_id: "AntMazeOpen-v0"
+env_kwargs: {goal_y: 3.0}        # 다음 단계는 4.0 / 6.0 으로 바꾸고 init_from 지정
+init_from: null
+total_timesteps: 1000000
+n_envs: 4
+learning_rate: 1.0e-4
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05
+ent_coef: 0.005
+log_std_init: -1.0               # BC 행동 보존(warm-start)
+norm_reward: true
+clip_reward: 10.0
+bc_policy_path: "models/bc_policy.pt"   # 실제 BC 정책 → warm-start
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints_stage0_warm"
+checkpoint_freq: 100000
+warmstart_eval_episodes: 20
+vec_env: "dummy"
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "stage0_openplane_warm_3m_v1"

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# macOS
+.DS_Store
+
+# Large artifacts / PII — excluded from the repo.
+# wandb logs embed email/host/local paths; models/ is ~1GB; expert demos are large.
+# Only selected final checkpoints are force-added (git add -f); see README.
+wandb/
+models/
+data/*.npz
+outputs/logs/
+
+# Tracked (portfolio showcase): outputs/videos, outputs/images, outputs/evaluation_results.json

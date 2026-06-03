@@ -1,0 +1,36 @@
+# PPO 하이퍼파라미터 (AntMaze warm-start용)
+env_id: "AntMaze-v0"         # 기본 미로 env (Stage 0는 별도 config에서 AntMazeOpen-v0)
+total_timesteps: 2000000
+n_envs: 4
+learning_rate: 1.0e-4        # 실험#5: 3e-4→1e-4. train_ppo가 linear_schedule로 감쇠시킴 (정책 step 크기 축소)
+n_steps: 2048
+batch_size: 256
+gamma: 0.99
+clip_range: 0.2
+n_epochs: 10
+target_kl: 0.05             # 정책이 한 번에 너무 멀리 가면 업데이트 조기중단 — 발산 방지(절대 풀지 말 것: 풀면 더 큰 step이 박혀 악화)
+ent_coef: 0.005             # 실험#5 핵심: σ가 압력에 맞춰 넓어지게 해 "평균(μ) 전용 KL 폭발" 차단. 0이면 모든 압력이 μ에 쏠림
+
+log_std_init: -1.0           # 시작 행동 노이즈 σ≈0.37 (BC 행동 보존). 기본값 0이면 σ=1이라 warm-start가 묻힘. (고정 σ 문제는 ent_coef로 해결 — 올리지 말 것)
+
+# 보상 정규화 (실험#5): obs는 FixedNormalizeObs 전용 → norm_obs=False 필수. norm_reward만 켜서 원시 -800 보상을 O(1)로
+norm_reward: true
+clip_reward: 10.0
+
+# 경로
+bc_policy_path: "models/bc_policy.pt"
+norm_stats_path: "data/obs_norm_stats.npz"
+checkpoint_dir: "models/checkpoints"
+checkpoint_freq: 100000
+
+# warm-start 검증
+warmstart_eval_episodes: 20  # 학습 '전' 결정적 평가 에피소드 수
+
+# 병렬화: 처음엔 dummy로 스모크, 그 다음 subproc
+vec_env: "dummy"           # "dummy" 또는 "subproc"
+
+# W&B (계정 없으면 false로 두고 진행)
+wandb_project: "AntMazeRL"
+use_wandb: true
+run_name: "2M_reward_waypoint_v1"   # 실험#7: 도달보너스 유지 + 유클리드 진행→웨이포인트 경로 진행 보상. (스모크는 --smoke 오버라이드)
+
