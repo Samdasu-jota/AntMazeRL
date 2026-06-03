@@ -41,6 +41,9 @@ Python 3.12 · MuJoCo · Gymnasium · PyTorch · Stable-Baselines3 · W&B
 > The maze environment is built from scratch (it does **not** use gymnasium-robotics' AntMaze) — to demonstrate environment-design skills.
 
 ## Structure
+
+> **AI agents / Claude Code:** start at [`CLAUDE.md`](CLAUDE.md) — the always-loaded index that points to per-folder `CLAUDE.md` guardrails and `docs/context/`, so you read distilled context instead of re-reading the source.
+
 ```
 src/        # core code (environment, models, training logic)
 configs/    # YAML configs (hyperparameters, etc.)
