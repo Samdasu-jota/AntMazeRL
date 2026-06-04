@@ -48,3 +48,4 @@ Other docs:
 - Mistake → one-line rule: when the AI gets something wrong, add ONE line to the relevant file (or here if edit-universal).
 - New durable discovery: it's born in local auto-memory; promote the proven kernel into `docs/context/02-discoveries.md`.
 - `python -m scripts.check_context_md` enforces the ≤100-line cap and this index's sync (run it before committing context edits).
+- A PostToolUse hook (`.claude/settings.json` → `scripts/hooks/context_md_guard.py`) auto-runs that checker on every CLAUDE.md / docs/context edit and blocks the turn until violations are fixed.

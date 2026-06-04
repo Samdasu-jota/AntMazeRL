@@ -15,4 +15,7 @@ models/
 data/*.npz
 outputs/logs/
 
+# Claude Code: keep personal local overrides out of the repo (.claude/settings.json is tracked).
+.claude/settings.local.json
+
 # Tracked (portfolio showcase): outputs/videos, outputs/images, outputs/evaluation_results.json
