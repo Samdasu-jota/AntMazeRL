@@ -34,10 +34,17 @@ ANGLED_CAM = {
     "distance": 6.0, "elevation": -20.0, "azimuth": 90.0,
     "lookat": np.array([0.0, 0.0, 0.0]),
 }
+# 위에서 수직(elevation -90)으로 본 미로 전체 → '주행 경로'(A* 따라가기)를 보여줌. 전복은 못 보여줌.
+# (축소기둥 미로용; make_maze_short_video.TOPDOWN_CAM과 동일 세팅)
+TOPDOWN_CAM = {
+    "trackbodyid": -1, "distance": 13.0, "elevation": -90.0,
+    "azimuth": 90.0, "lookat": np.array([0.0, 3.0, 0.0]),
+}
+CAMS = {"angled": ANGLED_CAM, "topdown": TOPDOWN_CAM}
 
 
-def build_env(cfg, om, osd, seed=0, render=False):
-    mk = (dict(render_mode="rgb_array", camera_id=-1, default_camera_config=ANGLED_CAM)
+def build_env(cfg, om, osd, seed=0, render=False, cam=ANGLED_CAM):
+    mk = (dict(render_mode="rgb_array", camera_id=-1, default_camera_config=cam)
           if render else {})
     env = gym.make(cfg.get("env_id", "AntMaze-v0"), **(cfg.get("env_kwargs") or {}), **mk)
     env = apply_env_wrapper(env, cfg.get("env_wrapper"),
@@ -74,8 +81,11 @@ def main():
     ap.add_argument("--max-frames", type=int, default=700)
     ap.add_argument("--want-inverted", action="store_true",
                     help="가장 많이 뒤집힌 에피소드 선택(기본=첫 직립 성공)")
+    ap.add_argument("--cam", choices=("angled", "topdown"), default="angled",
+                    help="angled=몸통추적 측면각(전복 증거, 기본) · topdown=수직 위(주행 경로)")
     ap.add_argument("--norm-stats", default=None)
     args = ap.parse_args()
+    cam = CAMS[args.cam]
 
     with open(args.config) as f:
         cfg = yaml.safe_load(f)
@@ -99,7 +109,7 @@ def main():
     scan.close()
 
     # 2) 선택 시드 렌더
-    renv = build_env(cfg, om, osd, seed=best_seed, render=True)
+    renv = build_env(cfg, om, osd, seed=best_seed, render=True, cam=cam)
     frames, upzs, info, min_uz = rollout(renv, model, seed=best_seed, render=True,
                                          max_frames=args.max_frames)
     renv.close()
@@ -107,8 +117,8 @@ def main():
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     imageio.mimsave(args.out, frames, fps=30, macro_block_size=None)
 
-    # 3) 가장 뒤집힌 순간 프레임 → PNG (단일 증거 + 카메라 검증용)
-    if frames:
+    # 3) 가장 뒤집힌 순간 프레임 → PNG (단일 증거 + 카메라 검증용; topdown은 전복이 안 보여 생략)
+    if frames and args.cam == "angled":
         k = int(np.argmin(upzs))
         png = os.path.splitext(args.out)[0] + "_minupz.png"
         imageio.imwrite(png, frames[k])

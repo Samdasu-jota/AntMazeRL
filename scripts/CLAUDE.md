@@ -30,7 +30,7 @@ Read when running/editing anything in scripts/. Verified against source 2026-06-
 - evaluate_comparison.py — Phase 3.3 master comparison → outputs/evaluation_results.json (read for the canonical numbers).
 - plot_comparison.py — re-plots that JSON → comparison.png + factor_impact.png (no re-eval).
 - verify_placement.py — eval-only ablation: is maze failure geometry or turn-limit (hardcoded MODEL, no flags).
-- make_flip_video.py — before/after inverted-vs-upright evidence video (angled torso cam) + min-up_z PNG.
+- make_flip_video.py — before/after inverted-vs-upright evidence video. `--cam angled` (default, torso-tracking side angle) + min-up_z PNG, or `--cam topdown` (vertical overhead, shows the A*-path navigation; PNG skipped). Config-driven env build, so any checkpoint/maze via --config.
 - make_maze_result_video.py / make_maze_short_video.py — preset top-down result videos (hardcoded MODEL+paths, no flags); scan one maze success + one maze fail.
 - make_videos.py — Stage-0 plane-walk success clip + Stage-1 maze stuck/blocked clip (two different envs, not a success/fail pair; no flags).
 
@@ -72,7 +72,7 @@ python -m scripts.plot_comparison [--json outputs/evaluation_results.json] [--ou
 Video:
 ```
 python -m scripts.make_flip_video --config CFG.yaml --checkpoint CKPT.zip --out OUT.mp4 \
-    [--want-inverted] [--n-scan 40] [--seed0 20000] [--max-frames 700] [--norm-stats PATH]
+    [--cam angled|topdown] [--want-inverted] [--n-scan 40] [--seed0 20000] [--max-frames 700] [--norm-stats PATH]
 python -m scripts.make_videos                 # no flags, fixed checkpoints
 python -m scripts.make_maze_result_video      # no flags
 python -m scripts.make_maze_short_video       # no flags

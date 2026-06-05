@@ -3,6 +3,12 @@
 A reinforcement learning project that trains a MuJoCo Ant robot to traverse a maze
 **quickly, energy-efficiently, and without bumping into walls.**
 
+<p align="center">
+  <img src="outputs/gifs/maze_topdown_88.gif" width="420" alt="Top-down: the trained ant solving the maze (88%)">
+</p>
+
+*The trained policy solving the shrunk-pillar maze · **88%**, viewed top-down — classic **A\*** plans the waypoints, **RL** walks between them. Below: the bug that got it there.*
+
 <table><tr>
   <td align="center"><b>Before — crawling inverted · 58%</b></td>
   <td align="center"><b>After — upright walk · 88%</b></td>
