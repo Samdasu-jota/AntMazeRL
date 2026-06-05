@@ -3,6 +3,16 @@
 A reinforcement learning project that trains a MuJoCo Ant robot to traverse a maze
 **quickly, energy-efficiently, and without bumping into walls.**
 
+<table><tr>
+  <td align="center"><b>Before — crawling inverted · 58%</b></td>
+  <td align="center"><b>After — upright walk · 88%</b></td>
+</tr><tr>
+  <td><img src="outputs/gifs/maze_before_inverted_58.gif" width="380" alt="Ant crawling upside-down through the maze"></td>
+  <td><img src="outputs/gifs/maze_after_upright_88.gif" width="380" alt="Ant walking upright through the maze"></td>
+</tr></table>
+
+*Same maze, same A\* path — only the posture was fixed, and the same environment went **58% → 88%**. The bug was found by watching the rollout videos: the ant was succeeding while **crawling upside-down**.*
+
 ## 📊 Results
 
 The game-changer was spotting — in the rendered videos — that the ant was **crawling
@@ -24,8 +34,10 @@ environment fixed and changing one variable at a time** (deterministic, 100 epis
 | Map difficulty: short → full | upright policy | **−49pp** (harder map) |
 | Full-map fine-tune | full maze | **+34pp** (39→73) |
 
-- Full tuning log: **[EXPERIMENTS.md](EXPERIMENTS.md)** · Result videos (in experiment order): **[outputs/videos/](outputs/videos/)** · Reproduce the evaluation: `python -m scripts.evaluate_comparison && python -m scripts.plot_comparison`
-- Key before↔after (same maze, posture only): [before — inverted 58%](outputs/videos/06_phase3_미로직립_88%/미로_before_뒤집힘_58%.mp4) ↔ [after — upright 88%](outputs/videos/06_phase3_미로직립_88%/미로_after_직립_88%.mp4)
+![Per-factor impact — each intervention's contribution, holding the environment fixed](outputs/images/factor_impact.png)
+
+- Full tuning log: **[EXPERIMENTS.md](EXPERIMENTS.md)** · Full result videos (in experiment order): **[outputs/videos/](outputs/videos/)** · Reproduce the evaluation: `python -m scripts.evaluate_comparison && python -m scripts.plot_comparison`
+- The before/after clips above are the flip fix on the **same** short maze (posture corrected only); the full-maze 73% run is under [outputs/videos/](outputs/videos/).
 
 ## Pipeline
 1. **Environment** — custom maze + reward function (speed + energy + collision avoidance)
@@ -62,7 +74,7 @@ python3.12 -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install --upgrade pip
 pip install -r requirements.txt
-python scripts/check_install.py   # verify the env works (obs includes x,y + saves the first frame)
+python -m scripts.check_install   # verify the env works (obs includes x,y + saves the first frame)
 ```
 
 ## Troubleshooting
