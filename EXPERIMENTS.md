@@ -272,3 +272,16 @@
 - 도표: `outputs/images/comparison.png`(4패널: 팩트토네이도·baseline→RL·전복수정·맵난이도) + `factor_impact.png`(히어로). 영상: `outputs/videos/06_phase3_미로직립_88%/`(전복 before↔after) · `07_phaseA_풀맵_73%/`(풀맵).
 - 교훈: **① 정직한 비교의 핵심은 'env 고정'** — 단일 막대 0→5→58→88→73은 3개 다른 맵을 한 축에 섞어 88→73이 '퇴행'처럼 보이는 오류. 맵별로 분리하니 각 팩트 기여가 명확. ② 다른 AI의 "BC 5%"는 오독(그건 원래 풀맵 warm-start 정체값)이었고, **순수 BC는 처음 측정(미로 0%)**. ③ **전복수정(+30, env 완전 동일)이 단일 최대 게임체인저**, 학습 자체(+88)·기하(+37)·풀맵 일반화(+34)가 뒤따름. ④ 모든 숫자가 한 하니스서 일지 재현 → 신뢰.
 - 다음: **Phase 3 전체 마감(3.1 PPO·3.2 보상/커리큘럼·3.3 평가/비교 + 보너스 전복 발견/수정).** → **Phase 4(World Model)**.
+
+## Phase 4.1 — World-model rollout dataset (2026-06-05 03:42 UTC)
+- run: p4_1_rollouts_v1 | checkpoint: models/checkpoints_p3_maze_upright/ppo_final.zip
+- env: AntMazeWaypoint-v0 + waypoint_follow | config: configs/ppo_p3_maze_upright.yaml
+- action mode: mixed det=500/stoch=500 (det_frac=0.5) | seed0: 20000 | episodes: 1000
+- transitions: 118788 | obs_dim 109 action_dim 8
+- success(reached_goal): det 92.2% (cf. 로그 88%), stoch 84.6%, all 88.4%
+- ep_len: mean 118.8 / median 101.0 / max 1000
+- 종료: reached 884, fell/flip 114, timeout 2
+- waypoint switch(비-Markov): 1817 transitions flagged
+- output: data/world_model_rollouts.npz | norm(4.2 학습시 train-split): data/world_model_norm.npz
+- git: bfafb28
+- 교훈: (직접 채우기)

@@ -6,7 +6,7 @@ auto-load only when you edit that folder. Keep every context file ≤100 lines (
 scripts.check_context_md`).
 
 ## CROSS-MODULE INVARIANTS (bite on any edit)
-- `EXPERIMENTS.md` is machine-appended by `train_ppo.py` (append_experiment_log, train_ppo.py:311, mode "a") — APPEND ONLY, never reformat. It is the experiment ledger.
+- `EXPERIMENTS.md` is machine-appended by `train_ppo.py` (append_experiment_log, train_ppo.py:311, mode "a") and by `scripts.collect_rollouts` (its own Phase-4.1 block) — APPEND ONLY, never reformat. It is the experiment ledger.
 - No GPU: CPU MuJoCo, n_envs=4, fps ~3300; 1M steps ≈ 5 min, 2M ≈ 10 min. Don't estimate in hours.
 - Touch env / reward / termination? Re-run `python -m scripts.eval_flip` to confirm posture (up_z) didn't regress — height-only metrics are blind to inverted-crawl.
 - Run code as modules from repo root (`python -m scripts.<name>`, `python -m src.training.train_ppo`); scripts `import src.envs` to register `AntMaze*-v0`. A bare file path fails.
@@ -18,6 +18,7 @@ scripts.check_context_md`).
 - Train: `python -m src.training.train_ppo --config configs/<name>.yaml [--smoke|--no-wandb|--timesteps N|--run-name NAME]`
 - Authoritative eval: `final_eval` runs inside training (100 ep, seed0=20000, deterministic; PASS = success ≥0.80 AND ep_len <1000). Posture: `python -m scripts.eval_flip --config <cfg> --checkpoint <ckpt>`
 - Compare / plot: `python -m scripts.evaluate_comparison` · `python -m scripts.plot_comparison`
+- World-model data (Phase 4.1): `python -m scripts.collect_rollouts [--episodes N] [--det-frac 0.5] [--smoke]`
 - No lint / unit-test framework — `test_env.py` + `check_install.py` are the smoke tests.
 
 ## STAGE / PHASE NAMING KEY (configs/ prefixes; det 100-ep success)
@@ -26,6 +27,7 @@ scripts.check_context_md`).
 - `p2_*` — upright fix on plane → 98% (flip 34%→2%).
 - `p3_*` — upright fix on maze → 88% (shrunk pillar). `ppo_p3_maze_fullpillar` = full maze.
 - Phase A — full maze (pillar 3.0) fine-tune → 73%.
+- Phase 4 — World Model. 4.1: collect p3-upright rollouts → `data/world_model_rollouts.npz` (RAW obs). 4.2 (transformer) pending. See `src/world_model/CLAUDE.md`.
 - Pattern: `ppo_<stage>_<variant>.yaml` (train). `eval_*.yaml` = eval-only (rebuild env for `scripts.eval_flip --config ... --checkpoint ...`).
 
 ## NAVIGATION INDEX
@@ -34,6 +36,7 @@ Per-folder guardrails (auto-load when you edit that folder):
 - `src/training/CLAUDE.md` — PPO warm-start, normalization, target_kl, override_log_std, eval gates, EXPERIMENTS appender.
 - `configs/CLAUDE.md` — config schema, stage/phase naming, how a run composes, worked example.
 - `scripts/CLAUDE.md` — full train/eval/video/plot command reference + script map.
+- `src/world_model/CLAUDE.md` — Phase 4: rollout dataset schema, store-RAW-obs rule, non-Markov waypoint caveat, train-split norm.
 
 Read on demand (cross-cutting):
 - `docs/context/01-architecture.md` — pipeline (incl. future World-Model/Compression), 3 envs, A*+RL split, Stage→Phase table.

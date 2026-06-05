@@ -22,6 +22,7 @@ Read when running/editing anything in scripts/. Verified against source 2026-06-
 - test_env.py — full AntMaze smoke: dim asserts, 3 random eps, reward = speed−energy−collision assert, path PNG, 2 cam mp4s.
 - preview_expert.py — eyeball scripted expert gait (stage A/B/C); tune before collecting.
 - collect_demos.py — 200-ep scripted-expert demos → data/expert_demos.npz (BC training data).
+- collect_rollouts.py — Phase 4.1: runs p3-upright PPO in AntMazeWaypoint-v0 with NO FixedNormalizeObs (RAW obs) → (s,a,s',r,done)+wp_idx/subgoal/action_mode npz for the world model; appends a Phase-4.1 block to EXPERIMENTS.md. `--smoke`=2ep+verify.
 - train_bc.py — trains BC from bc_config.yaml; reads `configs/bc_config.yaml` (path hardcoded, no flags).
 - eval_flip.py — up_z posture diagnostic; up_z = 1−2*(qx²+qy²) (qpos[4],qpos[5]). Detects inverted-crawl that z<0.2 termination misses.
 - eval_waypoint.py — Stage1 waypoint-following success (hardcoded WAYPOINTS or A*).
@@ -45,6 +46,11 @@ Data + BC:
 python -m scripts.preview_expert C        # A|B|C positional, default A
 python -m scripts.collect_demos
 python -m scripts.train_bc
+```
+World model (Phase 4.1):
+```
+python -m scripts.collect_rollouts [--episodes 1000] [--det-frac 0.5] [--out data/world_model_rollouts.npz] [--smoke]
+# stores RAW obs (env built without FixedNormalizeObs); normalizes only to feed model.predict.
 ```
 Train (module, NOT in scripts/):
 ```

@@ -5,7 +5,7 @@ read when: orienting on the pipeline, the 3 envs, the A*+RL split, or the stage�
 ## Pipeline (README.md:30-36)
 1 Environment (custom maze + reward) · 2 BC (clone scripted expert) · 3 PPO ·
 5 Eval/ablation — DONE (only step with ✅).
-- **Step 4 World Model — FUTURE, not built.** Step 6 Compression — FUTURE, not built.
+- **Step 4 World Model — 4.1 data DONE, 4.2 transformer pending.** `scripts.collect_rollouts` runs the p3-upright policy → `data/world_model_rollouts.npz` of RAW (s,a,s',r,done)+wp_idx. Caveat: under waypoint_follow obs[107:109] jumps at sub-goal switches (≤2/ep, non-Markov) — flagged via `wp_switch`. See `src/world_model/CLAUDE.md`. Step 6 Compression — FUTURE, not built.
 - Maze env is hand-built, NOT gymnasium-robotics AntMaze (README.md:41).
 - obs=109-d, action=8-d. obs[-2:] = goal-relative vector (scripted_expert.py:21). obs[15:17] = body lin vel.
 
